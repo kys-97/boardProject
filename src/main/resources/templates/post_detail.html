@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
     <title>게시글 상세보기</title>
     <meta charset="UTF-8">
@@ -60,7 +61,17 @@
                         <div th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}"></div>
                     </div>
                 </div>
-                <!--                -->
+                <!--  댓글 수정/삭제 -->
+               <div class = "btn-container">
+                   <a id="update-btn" th:href="@{|/comment/update/${comment.id}|}" class="btn btn-sm btn-outline-secondary"
+                      sec:authorize="isAuthenticated()"
+                      th:if="${comment.author != null and #authentication.getPrincipal().getUsername() == comment.author.nickname}"
+                      th:text="수정"></a>
+                   <a href="javascript:void(0);" th:data-uri="@{|/comment/delete/${comment.id}|}"
+                      class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                      th:if="${comment.author != null and #authentication.getPrincipal().getUsername() == comment.author.nickname}"
+                      th:text="삭제"></a>
+               </div>
             </div>
         </div>
     </div>
@@ -78,7 +89,7 @@
         element.addEventListener('click', function() {
             if(confirm("정말로 삭제하시겠습니까?")) {
                 location.href = this.dataset.uri;
-            };
+            }
         });
     });
     const recommend_elements = document.getElementsByClassName("recommend");

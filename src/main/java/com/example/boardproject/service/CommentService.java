@@ -49,4 +49,17 @@ public class CommentService {
             throw new DataNotFoundException("POST NOT FOUND");
         }
     }
+
+  //delete
+    public void delete(CommentResponse commentResponse) {
+        this.commentRepository.deleteById(commentResponse.getId());
+    }
+
+    //update
+    public CommentResponse update(CommentResponse commentResponse, String content) {
+        commentResponse.setContent(content);
+        Comment comment = of(commentResponse);
+        this.commentRepository.save(comment);
+        return commentResponse;
+    }
 }
