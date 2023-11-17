@@ -33,9 +33,9 @@
         <!-- img -->
         <div class="mb-3">
             <!-- 파일 선택 input 태그 -->
-                <label for="file" class="form-label">새로운 파일 선택</label>
-                <input type="file" name="newFile" id="file" class="form-control"/>
-                <input type="hidden" th:if="${postRequest.filename ne null}" th:field="*{filename}" th:value="${postRequest.filename}"/>
+            <label for="file" class="form-label">새로운 파일 선택</label>
+            <input type="file" name="newFile" id="file" class="form-control"/>
+            <input type="hidden" th:if="${postRequest.filename ne null}" th:field="*{filename}" th:value="${postRequest.filename}"/>
         </div>
         <input type="submit" value="저장하기" class="btn btn-primary my-2">
         <button type="button" class="btn btn-success" onclick="javascript:location.href='/post/listpage'">목록으로</button>

@@ -137,6 +137,7 @@ public class PostService {
         return postResponse;
     }
 
+
     public void delete(PostResponse postResponse) {
         this.postRepository.deleteById(postResponse.getId());
     }

@@ -102,6 +102,9 @@ public class PostController {
     }
 
 
+
+
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String postdelete(Principal principal, @PathVariable("id") Integer id) {
