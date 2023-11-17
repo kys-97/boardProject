@@ -42,9 +42,11 @@
                 <thead class="thead-strong">
                 <tr>
                     <th width="10%">번호</th>
+                    <th width="30">썸네일</th>
                     <th width="">제목</th>
                     <th width="20%">작성자</th>
-                    <th width="20%">작성일</th>
+                    <th width="20%">작성일시</th>
+                    <th width="20%">수정일시</th>
                     <th width="10%">조회수</th>
                     <th width="10%">댓글수</th>
                 </tr>
@@ -56,6 +58,14 @@
                     <!--                    <td th:text="${loop.count}"></td>-->
                     <td>
                         <a th:href="@{|/post/detail/${post.id}|}" th:text="${post.subject}"></a>
+                    </td>
+                    <!-- 이미지가 있는 경우에만 이미지를 보여줌 -->
+                    <td th:if="${post.filepath ne null and post.filepath ne ''}">
+                        <img class= "thumbnails" th:src="${post.filepath.replace('/images/', '/thumbnails/')}">
+                    </td>
+                    <!-- 이미지가 없는 경우에는 빈 칸 또는 기본 이미지를 보여줄 수 있음 -->
+                    <td th:unless="${post.filepath ne null and post.filepath ne ''}">
+                        <img class= "thumbnails" src="/upload/default-thumbnail.png" alt="Default Thumbnail">
                     </td>
                     <td th:text="${post.author}"></td>
                     <td th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
