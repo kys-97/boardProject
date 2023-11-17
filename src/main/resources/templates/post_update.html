@@ -15,7 +15,7 @@
     <h2 style="font-size: 16px;">게시글 쓰기</h2>
     <!--    생성 & 수정 구분 <input type="hidden"  -->
     <!--    <form th:action="@{/post/create}" th:object="${postRequest}" method="post">-->
-    <form th:object="${postRequest}" method="post">
+    <form th:object="${postRequest}" method="post" enctype="multipart/form-data">
         <input type="hidden"/>
         <!--        th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
         <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
@@ -29,6 +29,13 @@
         <div class="mb-3">
             <label class="form-label">내용</label>
             <textarea th:field="*{content}" class="form-control" rows="5" cols="" name="content"></textarea>
+        </div>
+        <!-- img -->
+        <div class="mb-3">
+            <!-- 파일 선택 input 태그 -->
+                <label for="file" class="form-label">새로운 파일 선택</label>
+                <input type="file" name="newFile" id="file" class="form-control"/>
+                <input type="hidden" th:if="${postRequest.filename ne null}" th:field="*{filename}" th:value="${postRequest.filename}"/>
         </div>
         <input type="submit" value="저장하기" class="btn btn-primary my-2">
         <button type="button" class="btn btn-success" onclick="javascript:location.href='/post/listpage'">목록으로</button>

@@ -8,6 +8,16 @@
     <!-- 부트스트랩 css 추가 -->
     <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <style>
+
+        .img-size {
+            text-align: center;
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+
 </head>
 <body>
 <div layout:fragment="content" class="container my-3">
@@ -15,6 +25,12 @@
     <div class="card my-3">
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;" th:text="${post.content}"></div>
+            <!--img-->
+            <!-- 수정된 부분 -->
+            <div class="card-img" th:if="${post.filepath}">
+                <img class="img-size" th:src="@{${post.filepath}}"/>
+            </div>
+
             <div class="d-flex justify-content-end">
                 <div th:if="${post.updatedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
                     <div class="mb-2">modified at</div>

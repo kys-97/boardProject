@@ -29,6 +29,9 @@ public class PostResponse {
     private LocalDateTime updatedDate;
     private LocalDateTime createdDate;
     private Set<MemberResponse> voter;
+    //file
+    private String filename; //file name
+    private String filepath; //file location
 
     public PostResponse(Post entity) {
         this.id = entity.getId();
@@ -38,6 +41,8 @@ public class PostResponse {
         this.author = entity.getAuthor();
         this.commentList = entity.getCommentList();
         this.updatedDate = entity.getModifiedDate();
+        this.filename = entity.getFilename();
+        this.filepath = entity.getFilepath();
     }
 
 }

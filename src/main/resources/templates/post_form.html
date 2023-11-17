@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
     <title>Post form</title>
     <meta charset="UTF-8">
@@ -8,10 +8,43 @@
     <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
+
+<style>
+    /*이미지 업로드*/
+    .flex-container {
+        text-align: center;
+        display: flex;
+    }
+
+    .wrapper {
+        flex-grow: 1;
+
+
+        .image-box {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .upload-btn {
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            display: inline-block;
+            cursor: pointer;
+
+            input[type=file] {
+                display: none;
+            }
+        }
+    }
+</style>
+
 <body>
 <div class="container">
     <h5 class="my-3 border-bottom pb-2">게시글등록</h5>
-    <form th:object="${postRequest}" method="post">
+    <form th:object="${postRequest}" method="post" enctype="multipart/form-data">
         <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
             <div th:each="err : ${#fields.allErrors()}" th:text="${err}" />
         </div>
@@ -23,8 +56,22 @@
             <label for="content" class="form-label">내용</label>
             <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
         </div>
+        <!-- img -->
+        <div class="mb-3">
+            <div class="flex-container">
+                <div class="wrapper">
+                    <img src="https://i0.wp.com/adventure.co.kr/wp-content/uploads/2020/09/no-image.jpg" class="image-box"
+                         alt="#" />
+                    <label for="file" class="upload-btn">
+                        <input id="file" type="file" accept="image/*" name="file"/>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center">
         <input type="submit" value="저장하기" class="btn btn-primary my-2">
         <button type="button" class="btn btn-success" onclick="javascript:location.href='/post/list'">목록으로</button>
+        </div>
     </form>
 </div>
 
@@ -32,4 +79,15 @@
 <script src="/js/lib/jquery.min.js"></script>
 <script src="/js/lib/bootstrap.min.js"></script>
 </body>
+<script layout:fragment="script" type='text/javascript'>
+    const fileDOM = document.querySelector('#file');
+    const preview = document.querySelectorAll('.image-box');
+    fileDOM.addEventListener('change', () => {
+        const reader = new FileReader();
+        reader.onload = ({target}) => {
+            preview[0].src = target.result;
+        };
+        reader.readAsDataURL((fileDOM.files[0]));
+    });
+</script>
 </html>

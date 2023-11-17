@@ -7,7 +7,9 @@ import com.example.boardproject.data.dto.PostResponse;
 import com.example.boardproject.service.MemberService;
 import com.example.boardproject.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +18,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.security.Principal;
 
@@ -57,7 +61,7 @@ public class PostController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String postCreate(@Valid PostRequest postRequest,
-                             BindingResult bindingResult, Principal principal) {
+                             BindingResult bindingResult, Principal principal, MultipartFile file) throws Exception {
         if (bindingResult.hasErrors()) {
             return "post_form";
         }
@@ -65,9 +69,10 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "등록 권한이 없습니다.");
         }
         MemberResponse memberResponse = this.memberService.getMember(principal.getName());
-        this.postService.create(postRequest.getSubject(), postRequest.getContent(), memberResponse);
+        postService.create(postRequest, memberResponse, file);
         return "redirect:/post/list";
     }
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("update/{id}")
@@ -84,7 +89,7 @@ public class PostController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("update/{id}")
     public String postUpdate(@Valid PostRequest postRequest, BindingResult bindingResult, Principal principal,
-                             @PathVariable("id") Integer id) {
+                             @PathVariable("id") Integer id, MultipartFile newFile) throws Exception {
         if (bindingResult.hasErrors()) {
             return "post_update";
         }
@@ -92,9 +97,10 @@ public class PostController {
         if (!postResponse.getAuthor().getNickname().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this.postService.update(postResponse, postRequest.getSubject(), postRequest.getContent());
+        this.postService.update(postResponse, postRequest.getSubject(), postRequest.getContent(), newFile);
         return String.format("redirect:/post/detail/%s", id);   //  /post/detail/{id}로 리디렉션
     }
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")

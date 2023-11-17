@@ -20,6 +20,9 @@ public class Post extends BaseTimeEntity {
     private String subject;
     @Column(columnDefinition = "TEXT")
     private String content;
+    //file
+    private String filename; //file name
+    private String filepath; //file location
 
     //조회수
     //생성 되면 0으로 시작, null이면 안됨

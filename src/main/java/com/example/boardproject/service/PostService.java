@@ -2,6 +2,7 @@ package com.example.boardproject.service;
 
 import com.example.boardproject.config.DataNotFoundException;
 import com.example.boardproject.data.dto.MemberResponse;
+import com.example.boardproject.data.dto.PostRequest;
 import com.example.boardproject.data.dto.PostResponse;
 import com.example.boardproject.data.entity.Member;
 import com.example.boardproject.data.entity.Post;
@@ -15,11 +16,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -85,10 +89,10 @@ public class PostService {
 
     }
 
-    public PostResponse create(String subject, String content, MemberResponse memberResponse) {
+    public PostResponse create(PostRequest postRequest, MemberResponse memberResponse, MultipartFile file) throws Exception {
         PostResponse postResponse = new PostResponse();
-        postResponse.setSubject(subject);
-        postResponse.setContent(content);
+        postResponse.setSubject(postRequest.getSubject());
+        postResponse.setContent(postRequest.getContent());
 
         // 작성자(Member) 정보를 DB에서 가져온 MemberResponse에서 설정
         Member author = new Member();
@@ -96,15 +100,37 @@ public class PostService {
         postResponse.setAuthor(author);
 
         Post post = of(postResponse);
+
+        String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload";
+        UUID uuid = UUID.randomUUID(); // 랜덤 식별자
+        String fileName = uuid + "_" + file.getOriginalFilename();
+        File saveFile = new File(projectPath, fileName);
+        file.transferTo(saveFile);
+        post.setFilename(fileName);
+        post.setFilepath("/upload/" + fileName);
         this.postRepository.save(post);
         return postResponse;
     }
 
 
 
-    public PostResponse update(PostResponse postResponse, String subject, String content) {
+
+    public PostResponse update(PostResponse postResponse, String subject, String content, MultipartFile newFile) throws Exception {
         postResponse.setSubject(subject);
         postResponse.setContent(content);
+
+        // 새로운 파일이 전송되었을 경우에만 파일을 업로드하고 저장
+        if (newFile != null && !newFile.isEmpty()) {
+            String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload";
+            UUID uuid = UUID.randomUUID(); // 랜덤 식별자
+            String fileName = uuid + "_" + newFile.getOriginalFilename();
+            File saveFile = new File(projectPath, fileName);
+            newFile.transferTo(saveFile);
+
+            postResponse.setFilename(fileName);
+            postResponse.setFilepath("/upload/" + fileName);
+        }
+
         postResponse.setUpdatedDate(LocalDateTime.now());
         Post post = of(postResponse);
         this.postRepository.save(post);
